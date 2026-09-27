@@ -111,6 +111,21 @@ h3.pg { font-size: 18px; font-weight: 600; line-height: 1.3; }
 .notes-list b { display: block; font-weight: 600; font-size: 14.5px; line-height: 1.35; }
 .notes-list span { display: block; font-size: 13.5px; color: var(--pg-muted); line-height: 1.5; margin-top: 2px; }
 .hint-line { font-size: 12.5px; color: var(--pg-muted); margin: 0; }
+/* "find it" affordance: a crosshair on the pill and on every note, lit when its target is highlighted */
+:root { --find: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round'%3E%3Ccircle cx='8' cy='8' r='4.6'/%3E%3Ccircle cx='8' cy='8' r='1.1' fill='black'/%3E%3Cpath d='M8 .8v2.6M8 12.6v2.6M.8 8h2.6M12.6 8h2.6'/%3E%3C/svg%3E"); }
+.ctl-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.find-pill { display: inline-flex; align-items: center; gap: 6px; font: 500 12.5px/1 var(--f-body); color: var(--accent-text);
+  background: color-mix(in srgb, var(--accent) 12%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+  border-radius: 999px; padding: 5px 10px 5px 7px; }
+.find-ic { display: inline-block; width: 14px; height: 14px; flex: 0 0 auto; background-color: currentColor;
+  -webkit-mask: var(--find) center / contain no-repeat; mask: var(--find) center / contain no-repeat; }
+.notes-list li { padding-inline-end: 40px; cursor: pointer; }
+.notes-list li::after { content: ""; position: absolute; right: 12px; top: 11px; width: 17px; height: 17px; background-color: var(--pg-muted); opacity: .55;
+  -webkit-mask: var(--find) center / contain no-repeat; mask: var(--find) center / contain no-repeat; transition: opacity .15s, background-color .15s, transform .15s; }
+.notes-list li:hover::after, .notes-list li:focus-visible::after, .notes-list li.on::after { background-color: var(--accent); opacity: 1; transform: scale(1.12); }
+@media (prefers-reduced-motion: reduce) { .notes-list li::after { transition: none; } }
+.touch-only { display: none; }
+@media (hover: none) { .hover-only { display: none; } .touch-only { display: inline; } }
 
 .device { min-width: 0; }
 .browser { background: var(--pg-surface); border: 1px solid var(--pg-line); border-radius: 14px; overflow: hidden;
@@ -446,9 +461,12 @@ footer.pg-foot .built b { font: 500 11.5px/1 var(--f-mono); letter-spacing: .06e
         <p class="brand-note">One product, any brand. Each client gets their own logo and colors with no code changes.</p>
       </div>
       <div class="ctl ctl-notes">
-        <span class="ctl-label">What to look at</span>
+        <div class="ctl-head">
+          <span class="ctl-label">What to look at</span>
+          <span class="find-pill"><i class="find-ic" aria-hidden="true"></i><span class="hover-only">Hover to find it in the app</span><span class="touch-only">Tap to find it in the app</span></span>
+        </div>
         <ol class="notes-list" id="notes"></ol>
-        <p class="hint-line">Hover or tap a note to highlight it in the app.</p>
+        <p class="hint-line"><span class="hover-only">Click a note to keep it highlighted.</span><span class="touch-only">Tap again to clear the highlight.</span></p>
       </div>
     </aside>
 
